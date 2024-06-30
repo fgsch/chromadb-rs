@@ -164,8 +164,6 @@ struct HeartbeatResponse {
 mod tests {
     use super::*;
 
-    const TEST_COLLECTION: &str = "8-recipies-for-octopus";
-
     #[test]
     fn test_heartbeat() {
         let client: ChromaClient = ChromaClient::new(Default::default());
@@ -196,23 +194,33 @@ mod tests {
     fn test_create_collection() {
         let client: ChromaClient = ChromaClient::new(Default::default());
 
+        const TEST_CREATE_COLLECTION: &str = "1-recipe-for-octopus";
+
         let result = client
-            .create_collection(TEST_COLLECTION, None, true)
+            .create_collection(TEST_CREATE_COLLECTION, None, true)
             .unwrap();
-        assert_eq!(result.name(), TEST_COLLECTION);
+        assert_eq!(result.name(), TEST_CREATE_COLLECTION);
     }
 
     #[test]
     fn test_get_collection() {
         let client: ChromaClient = ChromaClient::new(Default::default());
 
-        let collection = client.get_collection(TEST_COLLECTION).unwrap();
-        assert_eq!(collection.name(), TEST_COLLECTION);
+        const TEST_GET_COLLECTION: &str = "2-recipies-for-octopus";
+
+        let collection = client.get_collection(TEST_GET_COLLECTION).unwrap();
+        assert_eq!(collection.name(), TEST_GET_COLLECTION);
     }
 
     #[test]
     fn test_list_collection() {
         let client: ChromaClient = ChromaClient::new(Default::default());
+
+        const TEST_LIST_COLLECTION: &str = "3-recipies-for-octopus";
+
+        assert!(client
+            .create_collection(TEST_LIST_COLLECTION, None, false)
+            .is_ok());
 
         let result = client.list_collections().unwrap();
         assert!(result.len() > 0);
@@ -222,15 +230,16 @@ mod tests {
     fn test_delete_collection() {
         let client: ChromaClient = ChromaClient::new(Default::default());
 
-        const DELETE_TEST_COLLECTION: &str = "6-recipies-for-octopus";
-        client
-            .get_or_create_collection(DELETE_TEST_COLLECTION, None)
-            .unwrap();
+        const TEST_DELETE_COLLECTION: &str = "4-recipies-for-octopus";
 
-        let collection = client.delete_collection(DELETE_TEST_COLLECTION);
+        assert!(client
+            .create_collection(TEST_DELETE_COLLECTION, None, false)
+            .is_ok());
+
+        let collection = client.delete_collection(TEST_DELETE_COLLECTION);
         assert!(collection.is_ok());
 
-        let collection = client.delete_collection(DELETE_TEST_COLLECTION);
+        let collection = client.delete_collection(TEST_DELETE_COLLECTION);
         assert!(collection.is_err());
     }
 }
